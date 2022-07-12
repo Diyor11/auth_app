@@ -1,9 +1,9 @@
 import axios from 'axios'
 
-const api = 'https://localhost:8080/auth'
+const api = 'http://localhost:8080/api/v1/users'
 
 const login = async(userData) => {
-    const res = await axios.post(api + '/login', userData).catch(e => console.log(e))
+    const res = await axios.post(api + '/login', userData)
 
     if(res.data){
         localStorage.setItem('user', JSON.stringify(res.data))

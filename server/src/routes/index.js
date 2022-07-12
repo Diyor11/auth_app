@@ -1,10 +1,7 @@
-// const AboutRouter = require('./aboutRouter')
-// const UserRoter = require('./usersRoute')
 const Fs = require('fs')
 const Path = require('path')
 
 const homedir = Path.resolve()
-console.log(homedir)
 
 module.exports = (app) => {
     // Get router and run || Custom Glob collector
@@ -22,8 +19,8 @@ module.exports = (app) => {
                 )
 
                 const route = await require(routeFile)
-                if(route.default?.path && route.default?.router) {
-                    app.use('/api/v1' +  route.default.path, route.default.router)
+                if(route?.path && route?.router) {
+                    app.use('/api/v1' +  route.path, route.router)
                 }
             }
             resolve(200)

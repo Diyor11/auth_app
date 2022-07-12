@@ -1,7 +1,7 @@
 import {useState, useEffect} from 'react'
 import { FaSignInAlt } from 'react-icons/fa'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import {toast} from 'react-toastify'
 import { login, reset } from '../features/auth/authSlice'
 import Spinner from '../components/Spinner'
@@ -53,7 +53,7 @@ export default function Login() {
         return <Spinner />
     }
 
-  return (
+  return !user ?(
     <>
         <section>
             <h1>
@@ -90,5 +90,5 @@ export default function Login() {
             </form>
         </section>
     </>
-  )
+  ):null
 }

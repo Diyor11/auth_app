@@ -1,5 +1,5 @@
 const { Sequelize, DataTypes } = require('sequelize')
-const Reletions = require('../models/Reletions')
+// const Reletions = require('../models/Reletions')
 const UsersModel = require('../models/UsersModel')
 const UserSessionsModel = require('../models/UserSessionsModel')
 const { createNewHash } = require('./bcrypt')
@@ -24,13 +24,13 @@ module.exports = async() => {
       // create database object
       let db = {}
       db.users = await UsersModel(sequelize, DataTypes)
-      db.users_session = await UserSessionsModel(sequelize, DataTypes)
+      db.user_sessions = await UserSessionsModel(sequelize, DataTypes)
 
       await db.users.sync()
-      await db.users_session.sync()
+      await db.user_sessions.sync()
   
       // Declare relations between tables
-    //   await Relations(db)
+      // await Reletions(db)
   
       // Create initial values if doesn't exist
       let initialData = [

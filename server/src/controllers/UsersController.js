@@ -10,7 +10,7 @@ module.exports = class UserController{
             const {user_password} = await req.body
 
             const userAgent = req.headers['user-agent']
-            const ipAddress = req.headers["x-forwarded-for"] || req.connection.remoteAddress
+            const ipAddress = req.headers["x-forwarded-for"] || req.socket.remoteAddress
 
             if (!(userAgent && ipAddress))
                 throw new res.error(400, "Invalid device!")
@@ -22,30 +22,36 @@ module.exports = class UserController{
                 }
             })
 
+            if(!user)
+                throw new res.error(400, 'User doesn\'t exist')
+
             const passwordIsCorrect = await compareHash(user_password, user.user_password)
 
             if(!passwordIsCorrect)
                 throw new res.error(401, 'Password is incorrect')
-            
-            if(!user)
-                throw new res.error(400, 'User doesn\'t exist')
 
             // destroy old session if user exist
             await req.db.user_sessions.destroy({
                 where: {
-                    user_id: user.user_id
+                    session_id: user.user_id
                 }
             })
 
+            
             // create session for the user
-            const session = await req.db.users_sessions.create({
-                user_id: user.user_id,
-                session_inet: ipAddress,
+            const session = await req.db.user_sessions.create({
+                session_id: user.user_id,
+                session_init: ipAddress,
                 session_user_agent: userAgent,
             })
 
+            // generate token using user's session
+            const token = await signJwtToken({
+                session_id: session.session_id,
+            });
+
             // generete token using user's session
-            const token = await req.db.users.findOne({
+            const userData = await req.db.users.findOne({
                 where: {
                     user_id: user.user_id
                 },
@@ -64,7 +70,6 @@ module.exports = class UserController{
             })
 
         } catch (e) {
-            console.log(e)
             next(e)
         }
     }

@@ -5,23 +5,23 @@ module.exports = async(req, res, next) => {
         if(!req.headers['authorization'])
             throw new res.error(403, 'Token not found')
         
-        const data = verifyJwtToken(req.headers['authorization'])
+            const data = verifyJwtToken(req.headers['authorization'])
 
         if(!data)
             throw new res.error(403, 'Invalid token')
         
-        const session = await req.db.users_sessions.findOne({
+        const session = await req.db.user_sessions.findOne({
             where: {
                 session_id: data.session_id,
             },
         })
 
-        const user_agent = req.headers['user_agent']
+        const user_agent = req.headers['user-agent']
 
         if(!session) throw new res.error(403, 'Session already expired')
 
         if(session.session_user_agent !== user_agent) {
-            await req.db.users_sessions.destroy({
+            await req.db.user_sessions.destroy({
                 where: {
                     session_id: data.session_id,
                 },

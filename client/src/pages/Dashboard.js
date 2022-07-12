@@ -8,30 +8,28 @@ export default function Dashboard() {
     const [data, setData] = useState({})
     const {user} = useSelector(state => state.auth)
 
-    const getAbout = async() => {
-        const api = 'http://localhost:8080'
-        try {
-            const config = {
-                headers: {
-                    'Authorization': user.data.token
-                }
-            }
-
-            let result = await axios.get(api + '/api/about', config)
-            setData(result.data)
-            
-        } catch (e) {
-            console.log(e)
-        }
-    }
-
     useEffect(() => {
-        if(!user) return null
-        getAbout().then()
-        return () => {
-            console.log('this will be logged on unmount')
+        if (!user) return;
+
+        const getAbout = async() => {
+            const api = 'http://localhost:8080/api/v1'
+            try {
+                const config = {
+                    headers: {
+                        'Authorization': user.data.token
+                    }
+                }
+    
+                let result = await axios.get(api + '/about', config)
+                setData(result)
+                
+            } catch (e) {
+                console.log(e)
+            }
         }
-    }, [])
+
+        getAbout().then()
+    }, [user])
 
   return user ? (
     <div>
